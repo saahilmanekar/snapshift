@@ -1,0 +1,71 @@
+# --------------------
+# Node / TypeScript
+# --------------------
+node_modules/
+dist/
+build/
+coverage/
+*.tsbuildinfo
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# --------------------
+# Environment variables
+# --------------------
+.env
+.env.*
+!.env.example
+
+# --------------------
+# Python
+# --------------------
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# --------------------
+# Jupyter
+# --------------------
+.ipynb_checkpoints/
+
+# --------------------
+# SnapShift data
+# --------------------
+data/raw/*
+data/processed/*
+
+# Keep directories in Git
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+
+# --------------------
+# Model artifacts
+# --------------------
+*.pkl
+*.joblib
+*.onnx
+
+# --------------------
+# OS
+# --------------------
+.DS_Store
+Thumbs.db
+
+# --------------------
+# IDE
+# --------------------
+.idea/
+
+# --------------------
+# Logs / temp
+# --------------------
+*.log
+tmp/
+temp/
