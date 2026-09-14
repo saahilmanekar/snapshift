@@ -10,6 +10,18 @@ def normalize_scores(plays: pl.DataFrame) -> pl.DataFrame:
     )
 
 
+def final_score_matches(
+    plays: pl.DataFrame, expected_home_score: float, expected_away_score: float
+) -> bool:
+    plays = plays.sort("play_id")
+    final_play = plays[-1]
+
+    home_score = final_play["total_home_score"].item()
+    away_score = final_play["total_away_score"].item()
+
+    return home_score == expected_home_score and away_score == expected_away_score
+
+
 def find_score_decreases(plays: pl.DataFrame) -> pl.DataFrame:
     plays = plays.sort("play_id")
 
