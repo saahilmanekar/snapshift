@@ -5,6 +5,7 @@ from scripts.validate_pbp import (
     normalize_scores,
     final_score_matches,
     find_duplicate_play_ids,
+    is_tied_game,
 )
 
 
@@ -33,3 +34,19 @@ def test_no_duplicate_play_ids_in_super_bowl_58():
     duplicates = find_duplicate_play_ids(real_plays)
 
     assert duplicates.shape[0] == 0
+
+
+def test_is_tied_game_false_for_super_bowl_58():
+    plays = pl.read_csv("data/samples/super_bowl_58.csv")
+    real_plays = plays.filter(pl.col("play_type").is_not_null())
+    normalized = normalize_scores(real_plays)
+
+    assert is_tied_game(normalized) is False
+
+
+def test_is_tied_game_true_for_2022_tie():
+    plays = pl.read_csv("data/samples/tied_game_2022.csv")
+    real_plays = plays.filter(pl.col("play_type").is_not_null())
+    normalized = normalize_scores(real_plays)
+
+    assert is_tied_game(normalized) is True
