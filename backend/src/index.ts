@@ -13,7 +13,7 @@ app.use(express.json());
 app.get("/health", (_req, res) => {
   res.json({
     status: "ok",
-    service: "snapshift-server",
+    service: "snapshift-backend",
   });
 });
 
@@ -36,5 +36,5 @@ io.on("connection", (socket) => {
 const PORT = process.env.PORT ?? 3000;
 
 httpServer.listen(PORT, () => {
-  console.log(`SnapShift server running on http://localhost:${PORT}`);
+  console.log(`SnapShift backend running on http://localhost:${PORT}`);
 });

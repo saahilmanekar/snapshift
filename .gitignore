@@ -69,3 +69,11 @@ Thumbs.db
 *.log
 tmp/
 temp/
+
+# Secrets
+.env
+.env.local
+.env.development
+.env.production
+.env.test
+secrets/

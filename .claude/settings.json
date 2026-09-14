@@ -1,0 +1,39 @@
+{
+  "permissions": {
+    "deny": [
+      "Read(.env)",
+      "Read(.env.local)",
+      "Read(.env.development)",
+      "Read(.env.production)",
+      "Read(.env.test)",
+      "Read(secrets/**)"
+    ],
+    "disableBypassPermissionsMode": "disable",
+    "blockReadsOutsideWorkingDirectories": true
+  },
+  "sandbox": {
+    "enabled": true,
+    "failIfUnavailable": true,
+    "allowUnsandboxedCommands": false,
+    "filesystem": {
+      "denyRead": [
+        "./.env",
+        "./.env.local",
+        "./.env.development",
+        "./.env.production",
+        "./.env.test",
+        "./backend/.env",
+        "./backend/.env.local",
+        "./backend/.env.development",
+        "./backend/.env.production",
+        "./backend/.env.test",
+        "./frontend/.env",
+        "./frontend/.env.local",
+        "./frontend/.env.development",
+        "./frontend/.env.production",
+        "./frontend/.env.test",
+        "./secrets"
+      ]
+    }
+  }
+}
