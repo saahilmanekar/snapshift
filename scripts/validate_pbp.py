@@ -22,6 +22,10 @@ def final_score_matches(
     return home_score == expected_home_score and away_score == expected_away_score
 
 
+def find_duplicate_play_ids(plays: pl.DataFrame) -> pl.DataFrame:
+    return plays.filter(pl.col("play_id").is_duplicated())
+
+
 def find_score_decreases(plays: pl.DataFrame) -> pl.DataFrame:
     plays = plays.sort("play_id")
 
