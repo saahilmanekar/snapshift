@@ -32,6 +32,13 @@ def is_tied_game(plays: pl.DataFrame) -> bool:
     return home_score == away_score
 
 
+def get_official_final_score(schedules: pl.DataFrame, game_id: str) -> tuple[float, float]:
+    game_row = schedules.filter(pl.col("game_id") == game_id)
+    home_score = game_row["home_score"].item()
+    away_score = game_row["away_score"].item()
+    return home_score, away_score
+
+
 def find_duplicate_play_ids(plays: pl.DataFrame) -> pl.DataFrame:
     return plays.filter(pl.col("play_id").is_duplicated())
 

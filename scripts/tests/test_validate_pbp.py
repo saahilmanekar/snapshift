@@ -6,6 +6,7 @@ from scripts.validate_pbp import (
     final_score_matches,
     find_duplicate_play_ids,
     is_tied_game,
+    get_official_final_score,
 )
 
 
@@ -24,7 +25,10 @@ def test_final_score_matches_super_bowl_58():
     real_plays = plays.filter(pl.col("play_type").is_not_null())
     normalized = normalize_scores(real_plays)
 
-    assert final_score_matches(normalized, expected_home_score=25, expected_away_score=22)
+    schedules = pl.read_csv("data/samples/schedules_sample.csv")
+    expected_home_score, expected_away_score = get_official_final_score(schedules, "2023_22_SF_KC")
+
+    assert final_score_matches(normalized, expected_home_score, expected_away_score)
 
 
 def test_no_duplicate_play_ids_in_super_bowl_58():
@@ -50,3 +54,12 @@ def test_is_tied_game_true_for_2022_tie():
     normalized = normalize_scores(real_plays)
 
     assert is_tied_game(normalized) is True
+
+
+def test_get_official_final_score_for_super_bowl_58():
+    schedules = pl.read_csv("data/samples/schedules_sample.csv")
+
+    home_score, away_score = get_official_final_score(schedules, "2023_22_SF_KC")
+
+    assert home_score == 25
+    assert away_score == 22
