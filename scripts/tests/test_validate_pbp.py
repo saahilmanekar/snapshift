@@ -12,7 +12,7 @@ from scripts.validate_pbp import (
 
 
 def test_no_score_decreases_in_super_bowl_58():
-    plays = pl.read_csv("data/samples/super_bowl_58.csv")
+    plays = pl.read_csv("data/samples/game_2023_22_SF_KC.csv")
     real_plays = plays.filter(pl.col("play_type").is_not_null())
     normalized = normalize_scores(real_plays)
 
@@ -22,7 +22,7 @@ def test_no_score_decreases_in_super_bowl_58():
 
 
 def test_final_score_matches_super_bowl_58():
-    plays = pl.read_csv("data/samples/super_bowl_58.csv")
+    plays = pl.read_csv("data/samples/game_2023_22_SF_KC.csv")
     real_plays = plays.filter(pl.col("play_type").is_not_null())
     normalized = normalize_scores(real_plays)
 
@@ -33,7 +33,7 @@ def test_final_score_matches_super_bowl_58():
 
 
 def test_no_duplicate_play_ids_in_super_bowl_58():
-    plays = pl.read_csv("data/samples/super_bowl_58.csv")
+    plays = pl.read_csv("data/samples/game_2023_22_SF_KC.csv")
     real_plays = plays.filter(pl.col("play_type").is_not_null())
 
     duplicates = find_duplicate_play_ids(real_plays)
@@ -42,7 +42,7 @@ def test_no_duplicate_play_ids_in_super_bowl_58():
 
 
 def test_is_tied_game_false_for_super_bowl_58():
-    plays = pl.read_csv("data/samples/super_bowl_58.csv")
+    plays = pl.read_csv("data/samples/game_2023_22_SF_KC.csv")
     real_plays = plays.filter(pl.col("play_type").is_not_null())
     normalized = normalize_scores(real_plays)
 
@@ -50,7 +50,7 @@ def test_is_tied_game_false_for_super_bowl_58():
 
 
 def test_is_tied_game_true_for_2022_tie():
-    plays = pl.read_csv("data/samples/tied_game_2022.csv")
+    plays = pl.read_csv("data/samples/game_2022_01_IND_HOU.csv")
     real_plays = plays.filter(pl.col("play_type").is_not_null())
     normalized = normalize_scores(real_plays)
 
@@ -67,7 +67,7 @@ def test_get_official_final_score_for_super_bowl_58():
 
 
 def test_validate_game_super_bowl_58():
-    plays = pl.read_csv("data/samples/super_bowl_58.csv")
+    plays = pl.read_csv("data/samples/game_2023_22_SF_KC.csv")
     schedules = pl.read_csv("data/samples/schedules_sample.csv")
 
     result = validate_game(plays, schedules, "2023_22_SF_KC")
@@ -81,7 +81,7 @@ def test_validate_game_super_bowl_58():
 
 
 def test_validate_game_tied_2022():
-    plays = pl.read_csv("data/samples/tied_game_2022.csv")
+    plays = pl.read_csv("data/samples/game_2022_01_IND_HOU.csv")
     schedules = pl.read_csv("data/samples/schedules_sample.csv")
 
     result = validate_game(plays, schedules, "2022_01_IND_HOU")

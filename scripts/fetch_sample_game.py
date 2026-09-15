@@ -26,12 +26,25 @@ def fetch_and_save_schedules(seasons: list[int], game_ids: list[str], output_pat
     schedules_slim.write_csv(output_path)
 
 
+GAMES = [
+    (2023, "2023_22_SF_KC"),   # Super Bowl LVIII, went to OT
+    (2022, "2022_01_IND_HOU"),  # real tie, 20-20
+    (2023, "2023_01_DET_KC"),
+    (2023, "2023_03_TEN_CLE"),
+    (2023, "2023_05_TEN_IND"),
+    (2023, "2023_07_GB_DEN"),
+    (2023, "2023_10_CAR_CHI"),
+    (2023, "2023_12_JAX_HOU"),
+    (2023, "2023_14_DEN_LAC"),
+    (2023, "2023_16_NYG_PHI"),
+]
+
 if __name__ == "__main__":
-    fetch_and_save_game(2023, "2023_22_SF_KC", "data/samples/super_bowl_58.csv")
-    fetch_and_save_game(2022, "2022_01_IND_HOU", "data/samples/tied_game_2022.csv")
+    for season, game_id in GAMES:
+        fetch_and_save_game(season, game_id, f"data/samples/game_{game_id}.csv")
 
     fetch_and_save_schedules(
-        seasons=[2023, 2022],
-        game_ids=["2023_22_SF_KC", "2022_01_IND_HOU"],
+        seasons=sorted({season for season, _ in GAMES}),
+        game_ids=[game_id for _, game_id in GAMES],
         output_path="data/samples/schedules_sample.csv",
     )
