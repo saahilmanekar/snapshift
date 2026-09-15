@@ -89,3 +89,15 @@ def test_validate_game_tied_2022():
     assert result["is_tied"] is True
     assert result["is_valid"] is True
     assert result["is_replayable"] is False
+
+
+def test_validate_game_handles_missing_game():
+    plays = pl.read_csv("data/samples/game_2023_22_SF_KC.csv")
+    schedules = pl.read_csv("data/samples/schedules_sample.csv")
+
+    empty_plays = plays.filter(pl.col("game_id") == "does_not_exist")
+
+    result = validate_game(empty_plays, schedules, "does_not_exist")
+
+    assert result["is_valid"] is False
+    assert result["is_replayable"] is False

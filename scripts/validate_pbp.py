@@ -41,6 +41,17 @@ def get_official_final_score(schedules: pl.DataFrame, game_id: str) -> tuple[flo
 
 def validate_game(plays: pl.DataFrame, schedules: pl.DataFrame, game_id: str) -> dict:
     real_plays = plays.filter(pl.col("play_type").is_not_null())
+
+    if real_plays.shape[0] == 0:
+        return {
+            "game_id": game_id,
+            "score_never_decreases": False,
+            "final_score_matches": False,
+            "no_duplicate_play_ids": False,
+            "is_tied": False,
+            "is_valid": False,
+            "is_replayable": False,
+        }
     normalized = normalize_scores(real_plays)
 
     score_never_decreases = find_score_decreases(normalized).shape[0] == 0
