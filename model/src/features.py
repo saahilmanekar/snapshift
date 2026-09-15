@@ -20,3 +20,11 @@ def compute_score_diff(plays: pl.DataFrame) -> pl.DataFrame:
     return plays.with_columns(
         (pl.col("home_score_pre") - pl.col("away_score_pre")).alias("home_score_diff")
     )
+
+
+def compute_score_time_interaction(plays: pl.DataFrame) -> pl.DataFrame:
+    return plays.with_columns(
+        (pl.col("home_score_diff") * pl.col("game_seconds_remaining")).alias(
+            "score_time_interaction"
+        )
+    )

@@ -1,6 +1,11 @@
 import polars as pl
 
-from model.src.features import compute_pre_play_scores, compute_is_overtime, compute_score_diff
+from model.src.features import (
+    compute_pre_play_scores,
+    compute_is_overtime,
+    compute_score_diff,
+    compute_score_time_interaction,
+)
 
 
 def test_first_play_has_zero_pre_play_score():
@@ -47,3 +52,15 @@ def test_home_score_diff():
 
     play = with_diff.filter(pl.col("play_id") == 916.0)
     assert play["home_score_diff"].item() == -3
+
+
+def test_score_time_interaction():
+    plays = pl.read_csv("data/samples/game_2023_22_SF_KC.csv")
+    real_plays = plays.filter(pl.col("play_type").is_not_null())
+
+    with_pre_scores = compute_pre_play_scores(real_plays)
+    with_diff = compute_score_diff(with_pre_scores)
+    with_interaction = compute_score_time_interaction(with_diff)
+
+    play = with_interaction.filter(pl.col("play_id") == 916.0)
+    assert play["score_time_interaction"].item() == -8064
