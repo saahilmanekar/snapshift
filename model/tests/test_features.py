@@ -5,6 +5,7 @@ from model.src.features import (
     compute_is_overtime,
     compute_score_diff,
     compute_score_time_interaction,
+    compute_home_team_won,
 )
 
 
@@ -64,3 +65,13 @@ def test_score_time_interaction():
 
     play = with_interaction.filter(pl.col("play_id") == 916.0)
     assert play["score_time_interaction"].item() == -8064
+
+
+def test_home_team_won_label():
+    plays = pl.read_csv("data/samples/game_2023_22_SF_KC.csv")
+    real_plays = plays.filter(pl.col("play_type").is_not_null())
+    schedules = pl.read_csv("data/samples/schedules_sample.csv")
+
+    with_label = compute_home_team_won(real_plays, schedules, "2023_22_SF_KC")
+
+    assert (with_label["home_team_won"] == 1).all()

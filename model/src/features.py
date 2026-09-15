@@ -1,5 +1,7 @@
 import polars as pl
 
+from scripts.validate_pbp import get_official_final_score
+
 
 def compute_pre_play_scores(plays: pl.DataFrame) -> pl.DataFrame:
     plays = plays.sort("play_id")
@@ -28,3 +30,12 @@ def compute_score_time_interaction(plays: pl.DataFrame) -> pl.DataFrame:
             "score_time_interaction"
         )
     )
+
+
+def compute_home_team_won(
+    plays: pl.DataFrame, schedules: pl.DataFrame, game_id: str
+) -> pl.DataFrame:
+    home_score, away_score = get_official_final_score(schedules, game_id)
+    home_team_won = 1 if home_score > away_score else 0
+
+    return plays.with_columns(pl.lit(home_team_won).alias("home_team_won"))
