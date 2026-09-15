@@ -1,0 +1,12 @@
+game_id,score_never_decreases,final_score_matches,no_duplicate_play_ids,is_tied,is_valid,is_replayable
+2003_02_CAR_TB,true,true,true,false,true,true
+2010_01_ATL_PIT,true,true,true,false,true,true
+2015_01_SEA_STL,true,true,true,false,true,true
+2008_11_PHI_CIN,true,true,true,true,true,false
+2019_01_IND_LAC,true,true,true,false,true,true
+1999_21_STL_TEN,true,true,true,false,true,true
+2000_21_BAL_NYG,true,true,true,false,true,true
+2003_21_CAR_NE,true,true,true,false,true,true
+2010_21_PIT_GB,true,true,true,false,true,true
+2015_21_CAR_DEN,true,true,true,false,true,true
+2019_21_SF_KC,true,true,true,false,true,true
