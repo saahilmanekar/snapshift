@@ -39,3 +39,15 @@ def compute_home_team_won(
     home_team_won = 1 if home_score > away_score else 0
 
     return plays.with_columns(pl.lit(home_team_won).alias("home_team_won"))
+
+
+def build_features(plays: pl.DataFrame, schedules: pl.DataFrame, game_id: str) -> pl.DataFrame:
+    real_plays = plays.filter(pl.col("play_type").is_not_null())
+
+    with_pre_scores = compute_pre_play_scores(real_plays)
+    with_diff = compute_score_diff(with_pre_scores)
+    with_interaction = compute_score_time_interaction(with_diff)
+    with_ot = compute_is_overtime(with_interaction)
+    with_label = compute_home_team_won(with_ot, schedules, game_id)
+
+    return with_label

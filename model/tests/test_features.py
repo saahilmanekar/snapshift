@@ -6,6 +6,7 @@ from model.src.features import (
     compute_score_diff,
     compute_score_time_interaction,
     compute_home_team_won,
+    build_features,
 )
 
 
@@ -75,3 +76,22 @@ def test_home_team_won_label():
     with_label = compute_home_team_won(real_plays, schedules, "2023_22_SF_KC")
 
     assert (with_label["home_team_won"] == 1).all()
+
+
+def test_build_features_produces_all_columns():
+    plays = pl.read_csv("data/samples/game_2023_22_SF_KC.csv")
+    schedules = pl.read_csv("data/samples/schedules_sample.csv")
+
+    features = build_features(plays, schedules, "2023_22_SF_KC")
+
+    assert features.shape[0] == 201
+    expected_columns = [
+        "home_score_pre",
+        "away_score_pre",
+        "home_score_diff",
+        "score_time_interaction",
+        "is_overtime",
+        "home_team_won",
+    ]
+    for col in expected_columns:
+        assert col in features.columns
