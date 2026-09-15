@@ -14,3 +14,9 @@ def compute_is_overtime(plays: pl.DataFrame) -> pl.DataFrame:
     return plays.with_columns(
         (pl.col("qtr") >= 5).cast(pl.Int64).alias("is_overtime")
     )
+
+
+def compute_score_diff(plays: pl.DataFrame) -> pl.DataFrame:
+    return plays.with_columns(
+        (pl.col("home_score_pre") - pl.col("away_score_pre")).alias("home_score_diff")
+    )
