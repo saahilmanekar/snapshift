@@ -12,3 +12,14 @@ def test_first_play_has_zero_pre_play_score():
     first_play = with_pre_scores.sort("play_id")[0]
     assert first_play["home_score_pre"].item() == 0
     assert first_play["away_score_pre"].item() == 0
+
+
+def test_pre_play_score_reflects_prior_scoring_play():
+    plays = pl.read_csv("data/samples/game_2023_22_SF_KC.csv")
+    real_plays = plays.filter(pl.col("play_type").is_not_null())
+
+    with_pre_scores = compute_pre_play_scores(real_plays)
+
+    next_play = with_pre_scores.filter(pl.col("play_id") == 916.0)
+    assert next_play["home_score_pre"].item() == 0
+    assert next_play["away_score_pre"].item() == 3
