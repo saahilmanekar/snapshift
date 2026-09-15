@@ -39,6 +39,30 @@ def get_official_final_score(schedules: pl.DataFrame, game_id: str) -> tuple[flo
     return home_score, away_score
 
 
+def validate_game(plays: pl.DataFrame, schedules: pl.DataFrame, game_id: str) -> dict:
+    real_plays = plays.filter(pl.col("play_type").is_not_null())
+    normalized = normalize_scores(real_plays)
+
+    score_never_decreases = find_score_decreases(normalized).shape[0] == 0
+    no_duplicate_play_ids = find_duplicate_play_ids(real_plays).shape[0] == 0
+    tied = is_tied_game(normalized)
+
+    expected_home_score, expected_away_score = get_official_final_score(schedules, game_id)
+    score_matches = final_score_matches(normalized, expected_home_score, expected_away_score)
+
+    is_valid = score_never_decreases and score_matches and no_duplicate_play_ids
+
+    return {
+        "game_id": game_id,
+        "score_never_decreases": score_never_decreases,
+        "final_score_matches": score_matches,
+        "no_duplicate_play_ids": no_duplicate_play_ids,
+        "is_tied": tied,
+        "is_valid": is_valid,
+        "is_replayable": is_valid and not tied,
+    }
+
+
 def find_duplicate_play_ids(plays: pl.DataFrame) -> pl.DataFrame:
     return plays.filter(pl.col("play_id").is_duplicated())
 

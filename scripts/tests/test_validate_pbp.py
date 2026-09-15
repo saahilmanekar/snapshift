@@ -7,6 +7,7 @@ from scripts.validate_pbp import (
     find_duplicate_play_ids,
     is_tied_game,
     get_official_final_score,
+    validate_game,
 )
 
 
@@ -63,3 +64,28 @@ def test_get_official_final_score_for_super_bowl_58():
 
     assert home_score == 25
     assert away_score == 22
+
+
+def test_validate_game_super_bowl_58():
+    plays = pl.read_csv("data/samples/super_bowl_58.csv")
+    schedules = pl.read_csv("data/samples/schedules_sample.csv")
+
+    result = validate_game(plays, schedules, "2023_22_SF_KC")
+
+    assert result["score_never_decreases"] is True
+    assert result["final_score_matches"] is True
+    assert result["no_duplicate_play_ids"] is True
+    assert result["is_tied"] is False
+    assert result["is_valid"] is True
+    assert result["is_replayable"] is True
+
+
+def test_validate_game_tied_2022():
+    plays = pl.read_csv("data/samples/tied_game_2022.csv")
+    schedules = pl.read_csv("data/samples/schedules_sample.csv")
+
+    result = validate_game(plays, schedules, "2022_01_IND_HOU")
+
+    assert result["is_tied"] is True
+    assert result["is_valid"] is True
+    assert result["is_replayable"] is False
