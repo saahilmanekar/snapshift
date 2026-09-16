@@ -1,0 +1,9 @@
+{
+  "intercept": 0.07215912047542582,
+  "coefficients": {
+    "home_score_diff": 0.25591695837693407,
+    "game_seconds_remaining": 4.775178909336432e-05,
+    "is_overtime": 0.006960433659338199,
+    "score_time_interaction": -5.279176178401181e-05
+  }
+}
