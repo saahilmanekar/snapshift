@@ -33,7 +33,8 @@ def build_dataset(seasons: list[int], replayable_ids: set[str]) -> pl.DataFrame:
 
         print(f"Finished season {season} ({len(game_ids)} replayable games)")
 
-    return pl.concat(feature_tables)
+    combined = pl.concat(feature_tables)
+    return combined.drop_nulls(subset=["game_seconds_remaining"])
 
 
 if __name__ == "__main__":
