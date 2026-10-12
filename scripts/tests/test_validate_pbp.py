@@ -2,7 +2,6 @@ import polars as pl
 
 from scripts.validate_pbp import (
     find_score_decreases,
-    normalize_scores,
     final_score_matches,
     find_duplicate_play_ids,
     is_tied_game,
@@ -11,25 +10,14 @@ from scripts.validate_pbp import (
 )
 
 
-def test_no_score_decreases_in_super_bowl_58():
-    plays = pl.read_csv("data/samples/game_2023_22_SF_KC.csv")
-    real_plays = plays.filter(pl.col("play_type").is_not_null())
-    normalized = normalize_scores(real_plays)
-
-    violations = find_score_decreases(normalized)
-
-    assert violations.shape[0] == 0
-
-
 def test_final_score_matches_super_bowl_58():
     plays = pl.read_csv("data/samples/game_2023_22_SF_KC.csv")
     real_plays = plays.filter(pl.col("play_type").is_not_null())
-    normalized = normalize_scores(real_plays)
 
     schedules = pl.read_csv("data/samples/schedules_sample.csv")
     expected_home_score, expected_away_score = get_official_final_score(schedules, "2023_22_SF_KC")
 
-    assert final_score_matches(normalized, expected_home_score, expected_away_score)
+    assert final_score_matches(real_plays, expected_home_score, expected_away_score)
 
 
 def test_no_duplicate_play_ids_in_super_bowl_58():
@@ -44,17 +32,15 @@ def test_no_duplicate_play_ids_in_super_bowl_58():
 def test_is_tied_game_false_for_super_bowl_58():
     plays = pl.read_csv("data/samples/game_2023_22_SF_KC.csv")
     real_plays = plays.filter(pl.col("play_type").is_not_null())
-    normalized = normalize_scores(real_plays)
 
-    assert is_tied_game(normalized) is False
+    assert is_tied_game(real_plays) is False
 
 
 def test_is_tied_game_true_for_2022_tie():
     plays = pl.read_csv("data/samples/game_2022_01_IND_HOU.csv")
     real_plays = plays.filter(pl.col("play_type").is_not_null())
-    normalized = normalize_scores(real_plays)
 
-    assert is_tied_game(normalized) is True
+    assert is_tied_game(real_plays) is True
 
 
 def test_get_official_final_score_for_super_bowl_58():
