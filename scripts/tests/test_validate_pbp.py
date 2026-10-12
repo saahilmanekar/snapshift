@@ -103,6 +103,23 @@ def test_validate_game_handles_missing_game():
     assert result["is_replayable"] is False
 
 
+def test_validate_game_flags_a_real_score_decrease():
+    plays = pl.DataFrame(
+        {
+            "play_id": [1.0, 2.0, 3.0],
+            "play_type": ["run", "pass", "run"],
+            "total_home_score": [0.0, 7.0, 3.0],
+            "total_away_score": [0.0, 0.0, 0.0],
+        }
+    )
+    schedules = pl.DataFrame({"game_id": ["g1"], "home_score": [3], "away_score": [0]})
+
+    result = validate_game(plays, schedules, "g1")
+
+    assert result["score_never_decreases"] is False
+    assert result["is_valid"] is False
+
+
 def test_scores_never_decrease_in_nflverse_row_order():
     plays = pl.read_csv("data/samples/game_2023_22_SF_KC.csv")
     real_plays = plays.filter(pl.col("play_type").is_not_null())

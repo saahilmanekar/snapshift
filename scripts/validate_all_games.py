@@ -24,7 +24,7 @@ def validate_all_games() -> pl.DataFrame:
 
 
 if __name__ == "__main__":
-    report = validate_all_games()
+    report = validate_all_games().sort("game_id")
     report.write_csv("data/samples/full_validation_report.csv")
 
     print(f"\nTotal games checked: {report.shape[0]}")

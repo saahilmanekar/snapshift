@@ -48,14 +48,12 @@ def validate_game(plays: pl.DataFrame, schedules: pl.DataFrame, game_id: str) ->
             "is_valid": False,
             "is_replayable": False,
         }
-    normalized = normalize_scores(real_plays)
-
-    score_never_decreases = find_score_decreases(normalized).shape[0] == 0
+    score_never_decreases = find_score_decreases(real_plays).shape[0] == 0
     no_duplicate_play_ids = find_duplicate_play_ids(real_plays).shape[0] == 0
-    tied = is_tied_game(normalized)
+    tied = is_tied_game(real_plays)
 
     expected_home_score, expected_away_score = get_official_final_score(schedules, game_id)
-    score_matches = final_score_matches(normalized, expected_home_score, expected_away_score)
+    score_matches = final_score_matches(real_plays, expected_home_score, expected_away_score)
 
     is_valid = score_never_decreases and score_matches and no_duplicate_play_ids
 
