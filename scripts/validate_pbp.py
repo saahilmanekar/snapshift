@@ -2,8 +2,6 @@ import polars as pl
 
 
 def normalize_scores(plays: pl.DataFrame) -> pl.DataFrame:
-    plays = plays.sort("play_id")
-
     return plays.with_columns(
         pl.col("total_home_score").cum_max().alias("total_home_score"),
         pl.col("total_away_score").cum_max().alias("total_away_score"),
@@ -13,7 +11,6 @@ def normalize_scores(plays: pl.DataFrame) -> pl.DataFrame:
 def final_score_matches(
     plays: pl.DataFrame, expected_home_score: float, expected_away_score: float
 ) -> bool:
-    plays = plays.sort("play_id")
     final_play = plays[-1]
 
     home_score = final_play["total_home_score"].item()
@@ -23,7 +20,6 @@ def final_score_matches(
 
 
 def is_tied_game(plays: pl.DataFrame) -> bool:
-    plays = plays.sort("play_id")
     final_play = plays[-1]
 
     home_score = final_play["total_home_score"].item()
@@ -79,8 +75,6 @@ def find_duplicate_play_ids(plays: pl.DataFrame) -> pl.DataFrame:
 
 
 def find_score_decreases(plays: pl.DataFrame) -> pl.DataFrame:
-    plays = plays.sort("play_id")
-
     plays = plays.with_columns(
         pl.col("total_home_score").shift(1).alias("prev_home_score"),
         pl.col("total_away_score").shift(1).alias("prev_away_score"),

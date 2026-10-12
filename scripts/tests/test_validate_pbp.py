@@ -101,3 +101,12 @@ def test_validate_game_handles_missing_game():
 
     assert result["is_valid"] is False
     assert result["is_replayable"] is False
+
+
+def test_scores_never_decrease_in_nflverse_row_order():
+    plays = pl.read_csv("data/samples/game_2023_22_SF_KC.csv")
+    real_plays = plays.filter(pl.col("play_type").is_not_null())
+
+    violations = find_score_decreases(real_plays)
+
+    assert violations.shape[0] == 0
