@@ -38,4 +38,4 @@ Overtime games stay replayable, but the probability line during an overtime peri
 
 ## Other
 
-- 3 plays with no game clock (a bare "Timeout." row) are dropped from model training.
+- 3 plays with no game clock (a bare "Timeout." row) are dropped from both model training and the replay.
