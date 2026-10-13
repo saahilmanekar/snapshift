@@ -34,3 +34,16 @@ def test_elapsed_seconds_count_up_from_kickoff_across_quarters():
     result = add_elapsed_replay_seconds(plays)
 
     assert result["elapsed_replay_seconds"].to_list() == [0, 300, 900]
+
+
+def test_a_600_second_overtime_starts_at_3600_seconds():
+    plays = pl.DataFrame(
+        {
+            "qtr": [4.0, 5.0, 5.0],
+            "quarter_seconds_remaining": [0.0, 600.0, 300.0],
+        }
+    )
+
+    result = add_elapsed_replay_seconds(plays)
+
+    assert result["elapsed_replay_seconds"].to_list() == [3600, 3600, 3900]
