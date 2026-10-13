@@ -1,6 +1,10 @@
 import polars as pl
 
-from scripts.import_games import add_elapsed_replay_seconds, add_sequence_numbers
+from scripts.import_games import (
+    add_elapsed_replay_seconds,
+    add_sequence_numbers,
+    drop_plays_without_clock,
+)
 
 
 def load_real_plays() -> pl.DataFrame:
@@ -47,3 +51,17 @@ def test_a_600_second_overtime_starts_at_3600_seconds():
     result = add_elapsed_replay_seconds(plays)
 
     assert result["elapsed_replay_seconds"].to_list() == [3600, 3600, 3900]
+
+
+def test_a_play_with_no_game_clock_is_dropped():
+    plays = pl.DataFrame(
+        {
+            "play_id": [1.0, 2.0, 3.0],
+            "quarter_seconds_remaining": [900.0, None, 600.0],
+            "game_seconds_remaining": [3600.0, None, 3300.0],
+        }
+    )
+
+    result = drop_plays_without_clock(plays)
+
+    assert result["play_id"].to_list() == [1.0, 3.0]

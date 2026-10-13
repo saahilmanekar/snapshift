@@ -1,6 +1,10 @@
 import polars as pl
 
 
+def drop_plays_without_clock(plays: pl.DataFrame) -> pl.DataFrame:
+    return plays.drop_nulls(subset=["quarter_seconds_remaining", "game_seconds_remaining"])
+
+
 def add_sequence_numbers(plays: pl.DataFrame) -> pl.DataFrame:
     return plays.with_row_index("sequence_number", offset=1)
 
