@@ -102,3 +102,25 @@ def build_play_rows(raw_plays: pl.DataFrame) -> pl.DataFrame:
     plays = rename_to_table_columns(plays)
     plays = cast_to_integers(plays)
     return plays.select(TABLE_COLUMNS)
+
+
+def build_game_rows(schedules: pl.DataFrame, validation: pl.DataFrame) -> pl.DataFrame:
+    flags = validation.select("game_id", "is_valid", "is_replayable")
+    games = schedules.join(flags, on="game_id", how="inner")
+
+    return games.select(
+        pl.col("game_id").alias("id"),
+        "season",
+        "week",
+        pl.when(pl.col("game_type") == "REG")
+        .then(pl.lit("REG"))
+        .otherwise(pl.lit("POST"))
+        .alias("season_type"),
+        pl.col("gameday").cast(pl.String).str.to_date().alias("game_date"),
+        "home_team",
+        "away_team",
+        pl.col("home_score").alias("home_final_score"),
+        pl.col("away_score").alias("away_final_score"),
+        "is_valid",
+        "is_replayable",
+    ).sort("id")

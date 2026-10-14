@@ -1,9 +1,12 @@
+from datetime import date
+
 import polars as pl
 
 from scripts.import_games import (
     add_elapsed_replay_seconds,
     add_pre_and_post_scores,
     add_sequence_numbers,
+    build_game_rows,
     build_play_rows,
     cast_to_integers,
     drop_plays_without_clock,
@@ -160,3 +163,48 @@ def test_build_play_rows_turns_a_raw_game_into_table_shaped_rows():
     assert rows["sequence_number"].to_list() == list(range(1, 202))
     assert rows["home_score_post"][-1] == 25
     assert rows["away_score_post"][-1] == 22
+
+
+def test_build_game_rows_joins_schedules_with_validation_results():
+    schedules = pl.DataFrame(
+        {
+            "game_id": ["2023_22_SF_KC", "2023_01_DET_KC", "2023_02_X_Y"],
+            "season": [2023, 2023, 2023],
+            "week": [22, 1, 2],
+            "game_type": ["SB", "REG", "REG"],
+            "gameday": ["2024-02-11", "2023-09-07", "2023-09-14"],
+            "home_team": ["KC", "KC", "Y"],
+            "away_team": ["SF", "DET", "X"],
+            "home_score": [25, 20, 10],
+            "away_score": [22, 21, 3],
+            "roof": ["dome", "outdoors", "dome"],
+        }
+    )
+    validation = pl.DataFrame(
+        {
+            "game_id": ["2023_22_SF_KC", "2023_01_DET_KC"],
+            "is_valid": [True, False],
+            "is_replayable": [True, False],
+        }
+    )
+
+    rows = build_game_rows(schedules, validation)
+
+    assert rows.columns == [
+        "id",
+        "season",
+        "week",
+        "season_type",
+        "game_date",
+        "home_team",
+        "away_team",
+        "home_final_score",
+        "away_final_score",
+        "is_valid",
+        "is_replayable",
+    ]
+    assert rows["id"].to_list() == ["2023_01_DET_KC", "2023_22_SF_KC"]
+    assert rows["season_type"].to_list() == ["REG", "POST"]
+    assert rows["game_date"].to_list() == [date(2023, 9, 7), date(2024, 2, 11)]
+    assert rows["home_final_score"].to_list() == [20, 25]
+    assert rows["is_replayable"].to_list() == [False, True]
