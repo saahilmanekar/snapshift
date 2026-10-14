@@ -5,7 +5,7 @@ import polars as pl
 from model.src.evaluate import load_model
 from model.src.predict import add_win_probability
 from scripts.import_games import build_play_rows
-from scripts.load_db import load_games, load_plays, load_predictions
+from scripts.load_db import import_game_plays, load_games, load_plays, load_predictions
 
 
 def test_load_games_inserts_one_row_per_game(db):
@@ -107,3 +107,26 @@ def test_load_predictions_links_each_probability_to_its_play(db):
         ("2023_22_SF_KC",),
     ).fetchone()[0]
     assert 0.5 < kickoff_prob < 0.65
+
+
+def test_import_game_plays_only_loads_replayable_games(db):
+    insert_game(db, "2023_22_SF_KC")
+    raw = pl.concat(
+        [
+            pl.read_csv("data/samples/game_2023_22_SF_KC.csv"),
+            pl.read_csv("data/samples/game_2022_01_IND_HOU.csv"),
+        ]
+    ).with_columns(
+        pl.lit(3.0).alias("home_timeouts_remaining"),
+        pl.lit(3.0).alias("away_timeouts_remaining"),
+    )
+
+    import_game_plays(db, raw, ["2023_22_SF_KC"], load_model(), "logreg-v1")
+
+    per_game = db.execute(
+        "SELECT game_id, count(*) FROM plays GROUP BY game_id"
+    ).fetchall()
+    assert per_game == [("2023_22_SF_KC", 201)]
+
+    predictions = db.execute("SELECT count(*) FROM predictions").fetchone()[0]
+    assert predictions == 201

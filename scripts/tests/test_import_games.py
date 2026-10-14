@@ -10,6 +10,7 @@ from scripts.import_games import (
     build_play_rows,
     cast_to_integers,
     drop_plays_without_clock,
+    get_replayable_game_ids,
     rename_to_table_columns,
 )
 
@@ -208,3 +209,16 @@ def test_build_game_rows_joins_schedules_with_validation_results():
     assert rows["game_date"].to_list() == [date(2023, 9, 7), date(2024, 2, 11)]
     assert rows["home_final_score"].to_list() == [20, 25]
     assert rows["is_replayable"].to_list() == [False, True]
+
+
+def test_get_replayable_game_ids_returns_only_that_seasons_replayable_games():
+    validation = pl.DataFrame(
+        {
+            "game_id": ["2023_01_A_B", "2023_02_C_D", "2022_01_E_F", "2023_03_G_H"],
+            "is_replayable": [True, False, True, True],
+        }
+    )
+
+    result = get_replayable_game_ids(validation, 2023)
+
+    assert result == ["2023_01_A_B", "2023_03_G_H"]

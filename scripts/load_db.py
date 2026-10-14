@@ -1,5 +1,8 @@
 import polars as pl
 
+from model.src.predict import add_win_probability
+from scripts.import_games import build_play_rows
+
 
 def load_games(connection, games: pl.DataFrame) -> None:
     sql = """
@@ -46,3 +49,16 @@ def load_predictions(connection, plays_with_probs: pl.DataFrame, model_version: 
     ]
     with connection.cursor() as cursor:
         cursor.executemany(sql, rows)
+
+
+def import_game_plays(connection, raw_plays, replayable_game_ids, model, model_version) -> None:
+    for game_id in replayable_game_ids:
+        game_plays = raw_plays.filter(pl.col("game_id") == game_id)
+        if game_plays.height == 0:
+            continue
+
+        plays = build_play_rows(game_plays)
+        load_plays(connection, plays)
+
+        with_probs = add_win_probability(plays, model)
+        load_predictions(connection, with_probs, model_version)

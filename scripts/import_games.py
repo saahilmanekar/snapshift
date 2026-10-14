@@ -124,3 +124,10 @@ def build_game_rows(schedules: pl.DataFrame, validation: pl.DataFrame) -> pl.Dat
         "is_valid",
         "is_replayable",
     ).sort("id")
+
+
+def get_replayable_game_ids(validation: pl.DataFrame, season: int) -> list[str]:
+    replayable_in_season = validation.filter(
+        pl.col("is_replayable") & pl.col("game_id").str.starts_with(f"{season}_")
+    )
+    return replayable_in_season["game_id"].to_list()
